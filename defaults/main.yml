@@ -7,3 +7,5 @@ slm_ansible_role_litellm_config_yaml: {}
 slm_ansible_role_litellm_compose_project_name: ""
 slm_ansible_role_litellm_service_networks: {}
 slm_ansible_role_litellm_compose_networks: {}
+slm_ansible_role_litellm_master_key: ""
+slm_ansible_role_litellm_salt_key: ""

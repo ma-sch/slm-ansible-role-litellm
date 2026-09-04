@@ -16,6 +16,10 @@
 # - slm_ansible_role_litellm_compose_project_name: Docker Compose project name (default: "", uses Compose default)
 # - slm_ansible_role_litellm_service_networks: dict rendered under services.litellm.networks — full network+alias config per network (default: {})
 # - slm_ansible_role_litellm_compose_networks: dict rendered under top-level networks — use to declare external networks (default: {})
+# - slm_ansible_role_litellm_master_key: pre-defined LiteLLM master key; takes priority over existing .env and auto-generation (default: "")
+# - slm_ansible_role_litellm_salt_key: pre-defined LiteLLM salt key; takes priority over existing .env and auto-generation (default: "")
+### Outputs:
+# - slm_ansible_role_litellm_resolved_master_key: effective master key used for this deployment (no_log: true)
 
 - name: LITELLM | Ensure LiteLLM directories exists
   ansible.builtin.file:
@@ -66,16 +70,30 @@
   ansible.builtin.set_fact:
     litellm_master_key: >-
       {{
-        litellm_master_key_file
-        if (litellm_master_key_file | length > 0)
-        else 'sk-' ~ lookup('password', '/dev/null length=32 chars=ascii_letters,digits')
+        slm_ansible_role_litellm_master_key
+        if (slm_ansible_role_litellm_master_key | length > 0)
+        else (
+          litellm_master_key_file
+          if (litellm_master_key_file | length > 0)
+          else 'sk-' ~ lookup('password', '/dev/null length=32 chars=ascii_letters,digits')
+        )
       }}
     litellm_salt_key: >-
       {{
-        litellm_salt_key_file
-        if (litellm_salt_key_file | length > 0)
-        else 'sk-' ~ lookup('password', '/dev/null length=32 chars=ascii_letters,digits')
+        slm_ansible_role_litellm_salt_key
+        if (slm_ansible_role_litellm_salt_key | length > 0)
+        else (
+          litellm_salt_key_file
+          if (litellm_salt_key_file | length > 0)
+          else 'sk-' ~ lookup('password', '/dev/null length=32 chars=ascii_letters,digits')
+        )
       }}
+  changed_when: false
+  no_log: true
+
+- name: LITELLM | Expose resolved master key to calling playbook
+  ansible.builtin.set_fact:
+    slm_ansible_role_litellm_resolved_master_key: "{{ litellm_master_key }}"
   changed_when: false
   no_log: true
 

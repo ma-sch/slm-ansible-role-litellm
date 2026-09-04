@@ -39,6 +39,12 @@ The role expects these values to be set for each deployment:
 - `slm_ansible_role_litellm_compose_project_name`: Docker Compose project name; when set, passed as `project_name` to the `docker_compose_v2` module — useful when LiteLLM is part of a larger Compose stack, default `""` (Compose derives the name from the directory)
 - `slm_ansible_role_litellm_service_networks`: dict rendered verbatim under `services.litellm.networks:` in the compose override — use to attach LiteLLM to named networks and assign aliases, default `{}`
 - `slm_ansible_role_litellm_compose_networks`: dict rendered verbatim under the top-level `networks:` key in the compose override — use to declare external networks the service should join, default `{}`
+- `slm_ansible_role_litellm_master_key`: pre-defined LiteLLM master key; takes priority over an existing `.env` on the target host and over auto-generation, default `""` (key is read from existing `.env` or generated)
+- `slm_ansible_role_litellm_salt_key`: pre-defined LiteLLM salt key; same priority rules as `slm_ansible_role_litellm_master_key`, default `""`
+
+## Role outputs
+
+- `slm_ansible_role_litellm_resolved_master_key`: the effective master key used for this deployment — set as a host variable after the role runs, marked `no_log: true` so it does not appear in Ansible output; use it in subsequent tasks to configure other services that need to call LiteLLM
 
 ## Example usage
 
