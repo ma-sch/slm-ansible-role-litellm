@@ -157,12 +157,20 @@
             interval: 5s
             timeout: 5s
             retries: 10
-      {% if slm_ansible_role_litellm_service_networks | length > 0 %}
           networks:
+            litellm_internal: {}
+      {% if slm_ansible_role_litellm_service_networks | length > 0 %}
             {{ slm_ansible_role_litellm_service_networks | to_nice_yaml(indent=2) | indent(12) }}
       {% endif %}
-      {% if slm_ansible_role_litellm_compose_networks | length > 0 %}
+        db:
+          networks:
+            litellm_internal:
+              aliases:
+                - db
       networks:
+        litellm_internal:
+          internal: true
+      {% if slm_ansible_role_litellm_compose_networks | length > 0 %}
         {{ slm_ansible_role_litellm_compose_networks | to_nice_yaml(indent=2) | indent(8) }}
       {% endif %}
   register: override_file_creation
