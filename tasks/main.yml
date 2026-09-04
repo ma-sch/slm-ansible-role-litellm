@@ -154,11 +154,11 @@
             retries: 10
       {% if slm_ansible_role_litellm_service_networks | length > 0 %}
           networks:
-            {{ slm_ansible_role_litellm_service_networks | to_nice_yaml(indent=2) | indent(8, first=true) }}
+            {{ slm_ansible_role_litellm_service_networks | to_nice_yaml(indent=2) | indent(12) }}
       {% endif %}
       {% if slm_ansible_role_litellm_compose_networks | length > 0 %}
       networks:
-        {{ slm_ansible_role_litellm_compose_networks | to_nice_yaml(indent=2) | indent(4, first=true) }}
+        {{ slm_ansible_role_litellm_compose_networks | to_nice_yaml(indent=2) | indent(8) }}
       {% endif %}
   register: override_file_creation
 
