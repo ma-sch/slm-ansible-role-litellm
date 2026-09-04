@@ -128,6 +128,11 @@
       LITELLM_SALT_KEY={{ litellm_salt_key }}
   no_log: true
 
+- name: LITELLM | Remove stale directory stub at config file path
+  ansible.builtin.file:
+    path: "{{ slm_ansible_role_litellm_config_dir }}/litellm_config.yaml"
+    state: absent
+
 - name: LITELLM | Copy LiteLLM config to target host
   ansible.builtin.copy:
     content: "{{ slm_ansible_role_litellm_config_yaml }}"
