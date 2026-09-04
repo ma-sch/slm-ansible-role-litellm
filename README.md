@@ -45,6 +45,7 @@ The role expects these values to be set for each deployment:
 ## Role outputs
 
 - `slm_ansible_role_litellm_resolved_master_key`: the effective master key used for this deployment — set as a host variable after the role runs, marked `no_log: true` so it does not appear in Ansible output; use it in subsequent tasks to configure other services that need to call LiteLLM
+- `slm_ansible_role_litellm_resolved_salt_key`: the effective salt key used for this deployment — same behaviour as `slm_ansible_role_litellm_resolved_master_key`
 
 ## Example usage
 

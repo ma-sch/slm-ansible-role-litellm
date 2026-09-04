@@ -20,6 +20,7 @@
 # - slm_ansible_role_litellm_salt_key: pre-defined LiteLLM salt key; takes priority over existing .env and auto-generation (default: "")
 ### Outputs:
 # - slm_ansible_role_litellm_resolved_master_key: effective master key used for this deployment (no_log: true)
+# - slm_ansible_role_litellm_resolved_salt_key: effective salt key used for this deployment (no_log: true)
 
 - name: LITELLM | Ensure LiteLLM directories exists
   ansible.builtin.file:
@@ -91,9 +92,10 @@
   changed_when: false
   no_log: true
 
-- name: LITELLM | Expose resolved master key to calling playbook
+- name: LITELLM | Expose resolved keys to calling playbook
   ansible.builtin.set_fact:
     slm_ansible_role_litellm_resolved_master_key: "{{ litellm_master_key }}"
+    slm_ansible_role_litellm_resolved_salt_key: "{{ litellm_salt_key }}"
   changed_when: false
   no_log: true
 
