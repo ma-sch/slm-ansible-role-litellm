@@ -36,6 +36,9 @@ The role expects these values to be set for each deployment:
 - `slm_ansible_role_litellm_docker_compose_url`: upstream Compose URL, default `https://docs.litellm.ai/docker-compose.yml`
 - `slm_ansible_role_litellm_config_yaml`: content used to generate the LiteLLM config file, see also: `https://docs.litellm.ai/docs/proxy/configs` , default `{}`
 - `slm_ansible_role_litellm_public_port`: host port mapped to the container, default `4000`
+- `slm_ansible_role_litellm_compose_project_name`: Docker Compose project name; when set, passed as `project_name` to the `docker_compose_v2` module — useful when LiteLLM is part of a larger Compose stack, default `""` (Compose derives the name from the directory)
+- `slm_ansible_role_litellm_service_networks`: dict rendered verbatim under `services.litellm.networks:` in the compose override — use to attach LiteLLM to named networks and assign aliases, default `{}`
+- `slm_ansible_role_litellm_compose_networks`: dict rendered verbatim under the top-level `networks:` key in the compose override — use to declare external networks the service should join, default `{}`
 
 ## Example usage
 
@@ -54,6 +57,14 @@ The role expects these values to be set for each deployment:
             api_key: "{{ lookup('env', 'OPENAI_API_KEY') }}"
       general_settings:
         master_key: "sk-..."
+    slm_ansible_role_litellm_compose_project_name: my-litellm-stack
+    slm_ansible_role_litellm_service_networks:
+      my-litellm-stack_default:
+        aliases:
+          - litellm
+          - llm-gateway
+    slm_ansible_role_litellm_compose_networks:
+      my-litellm-stack_default:
   roles:
     - role: slm-ansible-role-litellm
 ```

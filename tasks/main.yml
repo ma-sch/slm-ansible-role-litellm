@@ -13,6 +13,9 @@
 # - slm_ansible_role_litellm_docker_compose_url: URL to download LiteLLM docker-compose file (default: "https://docs.litellm.ai/docker-compose.yml")
 # - slm_ansible_role_litellm_config_yaml: content of the LiteLLM configuration file (default: {})
 # - slm_ansible_role_litellm_public_port: public port for LiteLLM service (default: 4000)
+# - slm_ansible_role_litellm_compose_project_name: Docker Compose project name (default: "", uses Compose default)
+# - slm_ansible_role_litellm_service_networks: dict rendered under services.litellm.networks — full network+alias config per network (default: {})
+# - slm_ansible_role_litellm_compose_networks: dict rendered under top-level networks — use to declare external networks (default: {})
 
 - name: LITELLM | Ensure LiteLLM directories exists
   ansible.builtin.file:
@@ -129,12 +132,21 @@
             interval: 5s
             timeout: 5s
             retries: 10
+      {% if slm_ansible_role_litellm_service_networks | length > 0 %}
+          networks:
+            {{ slm_ansible_role_litellm_service_networks | to_nice_yaml(indent=2) | indent(8, first=true) }}
+      {% endif %}
+      {% if slm_ansible_role_litellm_compose_networks | length > 0 %}
+      networks:
+        {{ slm_ansible_role_litellm_compose_networks | to_nice_yaml(indent=2) | indent(4, first=true) }}
+      {% endif %}
   register: override_file_creation
 
 - name: LITELLM | Start LiteLLM with Docker Compose
   when: override_file_creation is changed or config_file_copy is changed
   community.docker.docker_compose_v2:
     project_src: "{{ slm_ansible_role_litellm_docker_compose_dir }}"
+    project_name: "{{ slm_ansible_role_litellm_compose_project_name | default(omit, true) }}"
     files:
       - litellm.yml
       - litellm.override.yml
