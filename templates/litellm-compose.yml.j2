@@ -1,0 +1,31 @@
+{# SPDX-License-Identifier: MIT-0 #}
+services:
+  litellm:
+    image: docker.litellm.ai/berriai/litellm-database:{{ slm_ansible_role_litellm_version }}
+    environment:
+      DATABASE_URL: "postgresql://llmproxy:dbpassword1234@db:5432/litellm"
+      STORE_MODEL_IN_DB: "True"
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY}
+      LITELLM_SALT_KEY: ${LITELLM_SALT_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: litellm
+      POSTGRES_USER: llmproxy
+      POSTGRES_PASSWORD: dbpassword1234
+    volumes:
+      - litellm_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d litellm -U llmproxy"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  litellm_postgres_data:
+    driver: local

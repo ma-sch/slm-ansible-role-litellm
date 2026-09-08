@@ -10,8 +10,8 @@
 
 ### Optional Inputs:
 # - slm_ansible_role_litellm_version: version of LiteLLM docker image (default: "v1.98.0")
-# - slm_ansible_role_litellm_docker_compose_url: URL to download LiteLLM docker-compose file (default: "https://docs.litellm.ai/docker-compose.yml")
-# - slm_ansible_role_litellm_config_yaml: content of the LiteLLM configuration file (default: {})
+# - slm_ansible_role_litellm_config_yaml: dict with LiteLLM proxy configuration (default: {})
+# - slm_ansible_role_litellm_enable_request_response_logging: enable request/response logging in DB (default: false)
 # - slm_ansible_role_litellm_public_port: public port for LiteLLM service (default: 4000)
 # - slm_ansible_role_litellm_compose_project_name: Docker Compose project name (default: "", uses Compose default)
 # - slm_ansible_role_litellm_service_networks: dict rendered under services.litellm.networks — full network+alias config per network (default: {})
@@ -99,25 +99,11 @@
   changed_when: false
   no_log: true
 
-- name: LITELLM | Download LiteLLM docker-compose file to predefined location
-  ansible.builtin.get_url:
-    url: "{{ slm_ansible_role_litellm_docker_compose_url }}"
+- name: LITELLM | Render LiteLLM docker-compose file from bundled template
+  ansible.builtin.template:
+    src: litellm-compose.yml.j2
     dest: "{{ slm_ansible_role_litellm_docker_compose_dir }}/litellm.yml"
     mode: "0644"
-    force: false
-
-- name: LITELLM | Replace parts in default docker-compose file
-  ansible.builtin.replace:
-    path: "{{ slm_ansible_role_litellm_docker_compose_dir }}/litellm.yml"
-    regexp: "{{ item.regexp }}"
-    replace: "{{ item.replace }}"
-  loop:
-    - regexp: '(^\s*LITELLM_SALT_KEY:\s*).*$'
-      replace: '\1${LITELLM_SALT_KEY}'
-    - regexp: '(^\s*LITELLM_MASTER_KEY:\s*).*$'
-      replace: '\1${LITELLM_MASTER_KEY}'
-    - regexp: 'docker.litellm.ai/berriai/litellm-database:.*'
-      replace: 'docker.litellm.ai/berriai/litellm-database:{{ slm_ansible_role_litellm_version }}'
 
 - name: LITELLM | Create LiteLLM .env file with resolved keys
   ansible.builtin.copy:
@@ -133,9 +119,9 @@
     path: "{{ slm_ansible_role_litellm_config_dir }}/litellm_config.yaml"
     state: absent
 
-- name: LITELLM | Copy LiteLLM config to target host
-  ansible.builtin.copy:
-    content: "{{ slm_ansible_role_litellm_config_yaml }}"
+- name: LITELLM | Render LiteLLM config to target host
+  ansible.builtin.template:
+    src: litellm_config.yaml.j2
     dest: "{{ slm_ansible_role_litellm_config_dir }}/litellm_config.yaml"
     mode: "0644"
   register: config_file_copy

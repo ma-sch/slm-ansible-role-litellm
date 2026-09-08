@@ -2,8 +2,8 @@
 ---
 # defaults file for litellm
 slm_ansible_role_litellm_version: "v1.98.0"
-slm_ansible_role_litellm_docker_compose_url: https://docs.litellm.ai/docker-compose.yml
 slm_ansible_role_litellm_config_yaml: {}
+slm_ansible_role_litellm_enable_request_response_logging: false
 slm_ansible_role_litellm_compose_project_name: ""
 slm_ansible_role_litellm_service_networks: {}
 slm_ansible_role_litellm_compose_networks: {}
