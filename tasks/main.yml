@@ -11,7 +11,6 @@
 ### Optional Inputs:
 # - slm_ansible_role_litellm_version: version of LiteLLM docker image (default: "v1.98.0")
 # - slm_ansible_role_litellm_config_yaml: dict with LiteLLM proxy configuration (default: {})
-# - slm_ansible_role_litellm_enable_request_response_logging: enable request/response logging in DB (default: false)
 # - slm_ansible_role_litellm_public_port: public port for LiteLLM service (default: 4000)
 # - slm_ansible_role_litellm_compose_project_name: Docker Compose project name (default: "", uses Compose default)
 # - slm_ansible_role_litellm_service_networks: dict rendered under services.litellm.networks — full network+alias config per network (default: {})

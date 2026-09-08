@@ -9,7 +9,7 @@ This role deploys LiteLLM with Docker Compose on a target host. It uses a bundle
 - Generates or reuses LiteLLM master and salt keys
 - Renders the bundled LiteLLM Docker Compose template (no external download required)
 - Writes a `.env` file for the container runtime
-- Renders a LiteLLM config YAML from `slm_ansible_role_litellm_config_yaml`, optionally injecting request/response logging settings
+- Renders a LiteLLM config YAML from `slm_ansible_role_litellm_config_yaml`
 - Creates a compose override to mount the config file and expose the public port
 - Starts the service with `community.docker.docker_compose_v2`
 - Provides a container health check against `http://localhost:4000`
@@ -32,7 +32,6 @@ The role expects these values to be set for each deployment:
 
 - `slm_ansible_role_litellm_version`: LiteLLM image tag, default `v1.98.0`
 - `slm_ansible_role_litellm_config_yaml`: dict used to generate the LiteLLM proxy config file, see also: `https://docs.litellm.ai/docs/proxy/configs`, default `{}`
-- `slm_ansible_role_litellm_enable_request_response_logging`: when `true`, adds `general_settings.store_model_in_db: true` and `general_settings.store_prompts_in_spend_logs: true` to the proxy config — enables request/response data in the LiteLLM UI, default `false`
 - `slm_ansible_role_litellm_public_port`: host port mapped to the container, default `4000`
 - `slm_ansible_role_litellm_compose_project_name`: Docker Compose project name; when set, passed as `project_name` to the `docker_compose_v2` module — useful when LiteLLM is part of a larger Compose stack, default `""` (Compose derives the name from the directory)
 - `slm_ansible_role_litellm_service_networks`: dict rendered verbatim under `services.litellm.networks:` in the compose override — use to attach LiteLLM to named networks and assign aliases, default `{}`
@@ -54,7 +53,6 @@ The role expects these values to be set for each deployment:
     slm_ansible_role_litellm_docker_compose_dir: /opt/litellm/deployment
     slm_ansible_role_litellm_config_dir: /etc/litellm/config
     slm_ansible_role_litellm_public_port: 4000
-    slm_ansible_role_litellm_enable_request_response_logging: true
     slm_ansible_role_litellm_config_yaml:
       model_list:
         - model_name: gpt-4o-mini
