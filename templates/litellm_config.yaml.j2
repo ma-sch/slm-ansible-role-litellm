@@ -1,5 +1,5 @@
 {# SPDX-License-Identifier: MIT-0 #}
-{%- set _config = slm_ansible_role_litellm_config_yaml if slm_ansible_role_litellm_config_yaml else {} -%}
+{%- set _config = slm_ansible_role_litellm_config_yaml if slm_ansible_role_litellm_config_yaml is mapping else (slm_ansible_role_litellm_config_yaml | default('{}') | from_yaml | default({})) -%}
 {%- if slm_ansible_role_litellm_enable_request_response_logging -%}
 {%-   set _logging = {'general_settings': {'store_model_in_db': true, 'store_prompts_in_spend_logs': true}} -%}
 {%-   set _config = _config | combine(_logging, recursive=True) -%}
