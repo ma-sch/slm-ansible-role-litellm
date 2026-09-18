@@ -8,3 +8,6 @@ slm_ansible_role_litellm_service_networks: {}
 slm_ansible_role_litellm_compose_networks: {}
 slm_ansible_role_litellm_master_key: ""
 slm_ansible_role_litellm_salt_key: ""
+slm_ansible_role_litellm_service_labels: {}
+slm_ansible_role_litellm_root_path: ""
+slm_ansible_role_litellm_expose_port: true

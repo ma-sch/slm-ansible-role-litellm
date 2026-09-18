@@ -17,6 +17,9 @@
 # - slm_ansible_role_litellm_compose_networks: dict rendered under top-level networks — use to declare external networks (default: {})
 # - slm_ansible_role_litellm_master_key: pre-defined LiteLLM master key; takes priority over existing .env and auto-generation (default: "")
 # - slm_ansible_role_litellm_salt_key: pre-defined LiteLLM salt key; takes priority over existing .env and auto-generation (default: "")
+# - slm_ansible_role_litellm_service_labels: dict rendered under services.litellm.labels (default: {})
+# - slm_ansible_role_litellm_root_path: value for SERVER_ROOT_PATH when LiteLLM runs behind a path prefix (default: "")
+# - slm_ansible_role_litellm_expose_port: publish the host port for LiteLLM (default: true)
 ### Outputs:
 # - slm_ansible_role_litellm_resolved_master_key: effective master key used for this deployment (no_log: true)
 # - slm_ansible_role_litellm_resolved_salt_key: effective salt key used for this deployment (no_log: true)
@@ -133,8 +136,18 @@
       services:
         litellm:
           command: ["--config", "/app/config.yaml"]
+      {% if slm_ansible_role_litellm_root_path | length > 0 %}
+          environment:
+            SERVER_ROOT_PATH: "{{ slm_ansible_role_litellm_root_path }}"
+      {% endif %}
+      {% if slm_ansible_role_litellm_service_labels | length > 0 %}
+          labels:
+            {{ slm_ansible_role_litellm_service_labels | to_nice_yaml(indent=2) | indent(6) }}
+      {% endif %}
+      {% if slm_ansible_role_litellm_expose_port | bool %}
           ports:
             - "{{ slm_ansible_role_litellm_public_port | default(4000) }}:4000"
+      {% endif %}
           volumes:
             - {{ slm_ansible_role_litellm_config_dir }}/litellm_config.yaml:/app/config.yaml:ro
           healthcheck:
